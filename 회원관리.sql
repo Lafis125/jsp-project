@@ -1,33 +1,33 @@
--- 1. È¸¿øµî±Ş »èÁ¦
+-- 1. íšŒì›ë“±ê¸‰ ì‚­ì œ
 DROP TABLE BG_grade CASCADE CONSTRAINTS;
 
--- 2. È¸¿ø°ü¸® »èÁ¦
+-- 2. íšŒì›ê´€ë¦¬ ì‚­ì œ
 DROP TABLE BG_member CASCADE CONSTRAINTS;
 
 
--- 1.È¸¿øµî±Ş Å×ÀÌºí
+-- 1.íšŒì›ë“±ê¸‰ í…Œì´ë¸”
 CREATE TABLE BG_Grade(
   Grade_No number(2) PRIMARY KEY,
   Grade_Name varchar2(21) NOT NULL
 );
 
--- 2.È¸¿ø°ü¸® Å×ÀÌºí
+-- 2.íšŒì›ê´€ë¦¬ í…Œì´ë¸”
 CREATE TABLE BG_Member(
     Member_id varchar2(60) primary key,
     Member_pw varchar2(60) not null,
     Member_name varchar2(100) not null,
     Member_address varchar2(1000) not null,
-    Member_gender CHAR(6) CHECK (Member_gender = '³²ÀÚ' or Member_gender = '¿©ÀÚ') NOT NULL,
+    Member_gender CHAR(6) CHECK (Member_gender = 'ë‚¨ì' or Member_gender = 'ì—¬ì') NOT NULL,
     Member_birth DATE NOT NULL,
     Member_tel varchar2(20) not null,
     Member_email varchar2(100) not null,
-    Member_status CHAR(6)  DEFAULT 'Á¤»ó' CHECK(Member_status in('Á¤»ó', 'Å»Åğ', 'ÈŞ¸é')),
+    Member_status CHAR(6)  DEFAULT 'ì •ìƒ' CHECK(Member_status in('ì •ìƒ', 'íƒˆí‡´', 'íœ´ë©´')),
     Member_regDate DATE DEFAULT sysdate,
     Member_conDate DATE DEFAULT sysdate,
     Grade_No number(2)  DEFAULT 1 REFERENCES BG_Grade(Grade_No)
 );
     
--- trigger conDate±âÁØ +90ÀÏ °æ°ú -> Status 'ÈŞ¸Õ' 
+-- trigger conDateê¸°ì¤€ +90ì¼ ê²½ê³¼ -> Status 'íœ´ë¨¼' 
 CREATE OR REPLACE TRIGGER trigger_updateStatus
 BEFORE UPDATE ON BG_Member
 FOR EACH ROW
@@ -40,13 +40,13 @@ BEGIN
     -- Check if the last access date is more than 90 days old
     IF :NEW.Member_conDate < v_date_threshold THEN
         -- Set the status to 'human'
-        :NEW.Member_status := 'ÈŞ¸é';
+        :NEW.Member_status := 'íœ´ë©´';
     END IF;
 END;
 /
 
--- °ü¸®ÀÚ
--- È¸¿ø¸®½ºÆ®
+-- ê´€ë¦¬ì
+-- íšŒì›ë¦¬ìŠ¤íŠ¸
 select Member_id id, Member_name name, Member_gender gender, 
 member_birth birth, Member_tel tel, Member_status status, 
 to_char(Member_regDate,'yyyy-mm-dd') regDate, 
@@ -63,30 +63,30 @@ g.Grade_name from BG_Member m, BG_Grade g
 )
 where rnum between 10 and 1;
 
--- È¸¿ø µî±Ş º¯°æ
+-- íšŒì› ë“±ê¸‰ ë³€ê²½
 update BG_Member set grade_No = 9  where Member_id = test;
 
--- È¸¿ø Á¤º¸ »èÁ¦
+-- íšŒì› ì •ë³´ ì‚­ì œ
 delete from BG_Member where Member_id = test;
 
 
--- È¸¿ø °ü¸®
--- È¸¿øµî±Ş test
+-- íšŒì› ê´€ë¦¬
+-- íšŒì›ë“±ê¸‰ test
 insert into BG_Grade(grade_no, grade_name)
-values(1, 'ÀÏ¹İÈ¸¿ø');
+values(1, 'ì¼ë°˜íšŒì›');
 insert into BG_Grade(grade_no, grade_name)
-values(9, '°ü¸®ÀÚ');
+values(9, 'ê´€ë¦¬ì');
 
--- È¸¿ø°¡ÀÔ 
+-- íšŒì›ê°€ì… 
 insert into BG_Member( Member_id, Member_pw , Member_name, 
 Member_gender, Member_birth, Member_tel,
 Member_email, Member_address )
-values('test1', '1111', 'Å×½ºÆ®', '³²ÀÚ', '1999-10-11', '010-1111-1111', 'asd@naver.com' , 'ÀÇÁ¤ºÎ ÀÌÁ¨');
+values('test1', '1111', 'í…ŒìŠ¤íŠ¸', 'ë‚¨ì', '1999-10-11', '010-1111-1111', 'asd@naver.com' , 'ì˜ì •ë¶€ ì´ì  ');
 
--- È¸¿ø°¡ÀÔ --> ¾ÆÀÌµğ Áßº¹ Ã¼Å©
+-- íšŒì›ê°€ì… --> ì•„ì´ë”” ì¤‘ë³µ ì²´í¬
 select Member_id from BG_member where Member_id = 'test'; 
 
--- ³»Á¤º¸ º¸±â
+-- ë‚´ì •ë³´ ë³´ê¸°
 select Member_id id, Member_pw pw, Member_name name, Member_gender gender,Member_gender gender,
 to_char(Member_birth ,'yyyy-mm-dd') birth,
 Member_tel tel,
@@ -95,31 +95,31 @@ to_char(Member_ConDate,'yyyy-mm-dd') conDate,
 Member_Address address
 from BG_Member where Member_id = 'test';  
 
--- ³»Á¤º¸ ¼öÁ¤
+-- ë‚´ì •ë³´ ìˆ˜ì •
 update BG_Member set Member_tel = '010-5555-5555' , 
-Member_email = 'qwe@daum.net' , Member_address = 'ÀÌÁ¨È®¿ø2' 
+Member_email = 'qwe@daum.net' , Member_address = 'ì´ì  í™•ì›2' 
 where Member_id = 'test' and Member_pw = '1111'; 
 
 
--- È¸¿ø ºñ¹ø º¯°æ
+-- íšŒì› ë¹„ë²ˆ ë³€ê²½
 update BG_Member set Member_pw = '1234' where Member_id = 'test' and Member_pw = '1111';
 
--- È¸¿ø »óÅÂ Å»Åğ
-update BG_Member set Member_status = 'Å»Åğ' where Member_id = 'test1' and Member_pw = '1111'; 
+-- íšŒì› ìƒíƒœ íƒˆí‡´
+update BG_Member set Member_status = 'íƒˆí‡´' where Member_id = 'test1' and Member_pw = '1111'; 
 
--- ·Î±×ÀÎ °ü·Á
--- ·Î±×ÀÎ
+-- ë¡œê·¸ì¸ ê´€ë ¨
+-- ë¡œê·¸ì¸
 select m.Member_id id, m.Member_pw pw, m.Member_name name,
 g.Grade_Name GradeName, g.Grade_No GradeNo from BG_Member m, BG_Grade g 
-where (m.Grade_no = g.Grade_no )and Member_id = 'test1' and Member_pw = '1111' and not Member_status in ('Å»Åğ') ;
+where (m.Grade_no = g.Grade_no )and Member_id = 'test1' and Member_pw = '1111' and not Member_status in ('íƒˆí‡´') ;
 
--- ¾ÆÀÌµğ Ã£±â
+-- ì•„ì´ë”” ì°¾ê¸°
 select Member_id id from BG_Member where Member_name = ? and Member_birth = ? and Member_tel = ? ;
 
--- ºñ¹Ğ¹øÈ£ Ã£±â ÀÌ¸ŞÀÏ Àü¼Û¿ë
+-- ë¹„ë°€ë²ˆí˜¸ ì°¾ê¸° ì´ë©”ì¼ ì „ì†¡ìš©
 select Member_pw pw from BG_Member where Member_id = ? and Member_name = ? and Member_birth = ? and Member_tel = ?;
 
--- ÃÖ±Ù Á¢¼ÓÀÏ º¯°æ
+-- ìµœê·¼ ì ‘ì†ì¼ ë³€ê²½
 update BG_Member set Member_ConDate = sysdate where Member_id = 'test1';
 
 
